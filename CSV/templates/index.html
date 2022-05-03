@@ -3,6 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+        table,td,th{
+            border: 1px solid;
+        }
+    </style>
 </head>
 <body>
 <h2>
@@ -16,10 +21,33 @@
         </form>
 </div>
 <div>
-{#{{ files }}#}
-    {% for each in files %}
-    <li>{{ each }}</li>
+    <h3> Project ID of pair with longest time together: {{ longest_pair_project_id }} </h3>
+    <h3> Duration of work together: {{ duration }} </h3>
+    <h3> IDs of the Employees in this project: {{ ids_winners }} </h3>
+</div>
+
+
+<div>
+<h3> All data from the file: </h3>
+<table class="tabl">
+    <tr>
+        <th>ID</th>
+        <th>EmpID</th>
+        <th>ProjectID</th>
+        <th>DateFrom</th>
+        <th>DateTo </th>
+    </tr>
+    {%  for each in employees %}
+        <tr>
+            <th>{{ each.id }}</th>
+            <td>{{ each.EmpID}}</td>
+            <td>{{ each.ProjectID}}</td>
+            <td> {{ each.DateFrom }}</td>
+            <td> {{ each.DateTo}}</td>
+        </tr>
+
     {% endfor %}
+</table>
 
 </div>
 </body>
