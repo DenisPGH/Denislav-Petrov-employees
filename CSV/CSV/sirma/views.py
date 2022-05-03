@@ -10,7 +10,8 @@ from django.views import generic as views
 from django.shortcuts import render
 
 # Create your views here.
-from CSV.sirma.models import CSVfiles, Employees
+from CSV.sirma.models import CSVfiles, Employees, Result
+
 
 def helper(all_project_ids):
     """ this function help to find the longest time together in one project"""
@@ -41,15 +42,16 @@ def helper(all_project_ids):
             connected_latest_start_data=max(list_start_date_both_emp)
             connected_earliest_end_data=min(list_end_date_both_emp)
             current_max_time_together_work_on_same_project=abs(connected_latest_start_data-connected_earliest_end_data)
-            #print(f" tog= {current_max_time_together_work_on_same_project}")
-            #overlap=max(0,current_max_time_together_work_on_same_project)
 
-            #if a.start < b.end and b.start < a.end:
-            # if min(list_start_date_both_emp) < max(list_end_date_both_emp) and \
-            #         max(list_start_date_both_emp) < min(list_end_date_both_emp):
             if (result_set[0].DateFrom<result_set[1].DateTo and result_set[1].DateFrom<result_set[0].DateTo) or\
                     (result_set[0].DateFrom>result_set[1].DateTo and result_set[1].DateFrom>result_set[0].DateTo):
                 #print(f"{each_project_id}='true'")
+                new_result=Result(
+                    duration=int(str(current_max_time_together_work_on_same_project).split(',')[0].split(" ")[0]),
+                    project_id=each_project_id
+                )
+                new_result.save()
+
                 if current_max_time_together_work_on_same_project > final_max_time:
                     final_max_time = current_max_time_together_work_on_same_project
                     final_project_id = each_project_id
@@ -74,10 +76,11 @@ class ShowResult(views.TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         file_to_show = CSVfiles.objects.all().last()
-        all_emp = Employees.objects.all()
         """ clear the db for every new file"""
         delete_all_data = Employees.objects.all()
         delete_all_data.delete()
+        delete_all_data_result = Result.objects.all()
+        delete_all_data_result.delete()
         """ store the all new data to the db"""
         if file_to_show:
             with open(f'{file_to_show.file}', newline='') as csvfile:
@@ -98,14 +101,12 @@ class ShowResult(views.TemplateView):
                     )
                     new_emp.save()
         """# give the date for calculation longest team work"""
+        all_emp = Employees.objects.all()
         all_project_id = Employees.objects.filter().values_list('ProjectID', flat=True).distinct()
         ids_emp, id_project, duration = helper(all_project_id)
-
         """return the result ot render on html page"""
         context['employees'] = all_emp
         context['longest_pair_project_id'] = id_project
-
-
         if ids_emp:
             context['has'] = True
             context['duration'] = duration
@@ -113,7 +114,6 @@ class ShowResult(views.TemplateView):
             context['employee_id_2'] = ids_emp[1]
         else:
             context['has'] = False
-
         return context
 
     success_url = reverse_lazy('result')
