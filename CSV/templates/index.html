@@ -9,7 +9,7 @@
     helllll
 </h2>
 <div>
-    <form method="post" enctype="multipart/form-data" action='{% url 'result' %}'>
+    <form method="post" enctype="multipart/form-data" action='{% url 'index' %}'>
         {{ form.as_p }}
         {% csrf_token %}
         <button type="submit"> Save</button>
