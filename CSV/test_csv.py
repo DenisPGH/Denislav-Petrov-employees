@@ -7,9 +7,9 @@ with open('test.csv', 'w', newline='') as csvfile:
     spamwriter.writerow(['den','islav'])
 
 
-with open('test.csv', newline='') as csvfile:
-    #chetene file
-    reader = csv.reader(csvfile)
-    for row in reader:
-        print(row[0])
-        print(row[1])
+# with open('test.csv', newline='') as csvfile:
+#     #chetene file
+#     reader = csv.reader(csvfile)
+#     for row in reader:
+#         print(row[0])
+#         print(row[1])
