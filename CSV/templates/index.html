@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h2>
+    helllll
+</h2>
+<div>
+    <form method="post" enctype="multipart/form-data" action='{% url 'result' %}'>
+        {{ form.as_p }}
+        {% csrf_token %}
+        <button type="submit"> Save</button>
+        </form>
+</div>
+<div>
+{#{{ files }}#}
+    {% for each in files %}
+    <li>{{ each }}</li>
+    {% endfor %}
+
+</div>
+</body>
+</html>
