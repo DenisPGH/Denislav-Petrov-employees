@@ -21,10 +21,14 @@
 </div>
 
 <div>
+    {% if has  %}
     <h3> Project ID of pair with longest time together: {{ longest_pair_project_id }} </h3>
     <h3> Duration of work together: {{ duration }} </h3>
     <h3> Employee ID 1: {{ employee_id_1 }} </h3>
      <h3> Employee ID 2: {{ employee_id_2 }} </h3>
+    {% else %}
+        <h3> There are not together worked employees in this file.</h3>
+    {% endif %}
 </div>
 
 

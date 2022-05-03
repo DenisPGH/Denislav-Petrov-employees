@@ -28,20 +28,33 @@ def helper(all_project_ids):
     for each_project_id in list_all_project_id:
         current_max_time_together_work_on_same_project = 0
         list_time_both_empl = []
+        list_start_date_both_emp=[]
+        list_end_date_both_emp=[]
         result_set = Employees.objects.filter(ProjectID=each_project_id)
         ids_of_current_pair = [x.EmpID for x in result_set]
         if len(result_set) == pair:
             for each_emp in result_set:
                 # calculate time for current pair
-                time_working_on_project = abs(each_emp.DateFrom - each_emp.DateTo)
-                list_time_both_empl.append(time_working_on_project)
-            current_max_time_together_work_on_same_project = \
-                max(list_time_both_empl) - min(list_time_both_empl)
-            if current_max_time_together_work_on_same_project > final_max_time:
-                final_max_time = current_max_time_together_work_on_same_project
-                final_project_id = each_project_id
-                final_emp_ids = ids_of_current_pair
+                list_start_date_both_emp.append(each_emp.DateFrom)
+                list_end_date_both_emp.append(each_emp.DateTo)
+            # calculation time togheter
+            connected_latest_start_data=max(list_start_date_both_emp)
+            connected_earliest_end_data=min(list_end_date_both_emp)
+            current_max_time_together_work_on_same_project=abs(connected_latest_start_data-connected_earliest_end_data)
+            #print(f" tog= {current_max_time_together_work_on_same_project}")
+            #overlap=max(0,current_max_time_together_work_on_same_project)
 
+            #if a.start < b.end and b.start < a.end:
+            # if min(list_start_date_both_emp) < max(list_end_date_both_emp) and \
+            #         max(list_start_date_both_emp) < min(list_end_date_both_emp):
+            if (result_set[0].DateFrom<result_set[1].DateTo and result_set[1].DateFrom<result_set[0].DateTo) or\
+                    (result_set[0].DateFrom>result_set[1].DateTo and result_set[1].DateFrom>result_set[0].DateTo):
+                #print(f"{each_project_id}='true'")
+                if current_max_time_together_work_on_same_project > final_max_time:
+                    final_max_time = current_max_time_together_work_on_same_project
+                    final_project_id = each_project_id
+                    final_emp_ids = ids_of_current_pair
+    #print(ids_of_current_pair)
     return final_emp_ids,final_project_id,final_max_time
 
 
@@ -91,9 +104,16 @@ class ShowResult(views.TemplateView):
         """return the result ot render on html page"""
         context['employees'] = all_emp
         context['longest_pair_project_id'] = id_project
-        context['duration'] = duration
-        context['employee_id_1'] = ids_emp[0]
-        context['employee_id_2'] = ids_emp[1]
+
+
+        if ids_emp:
+            context['has'] = True
+            context['duration'] = duration
+            context['employee_id_1'] = ids_emp[0]
+            context['employee_id_2'] = ids_emp[1]
+        else:
+            context['has'] = False
+
         return context
 
     success_url = reverse_lazy('result')
