@@ -8,7 +8,7 @@ with open('test_6.csv', 'w', newline='') as csvfile:
     #spamwriter.writerow(['Spam'] * 5 + ['Baked Beans'])
 
     # with 30 000 rows ===>about 3 min time for process(very slow)
-    for a in range(30000):
+    for a in range(300):
         spamwriter.writerow(
             [f'{random.randint(1,200)}',
              f' {random.randint(1,100)}',

@@ -1,6 +1,7 @@
 import datetime
 
 from django.shortcuts import render
+import re
 
 # Create your views here.
 import csv
@@ -11,6 +12,29 @@ from django.shortcuts import render
 
 # Create your views here.
 from CSV.sirma.models import CSVfiles, Employees, Result
+
+
+def get_different_types_date(text:str):
+    """
+    this function use regex to recognize tree types of date===>
+    2022-05-01, 2022/05/01, 2022.05.01
+    return allways ===> 2022-02-05
+    """
+    year=''
+    month=''
+    day=''
+    #pattern=r'(?P<date>([0-9]{4}(?P<sep>([-\.\/]))[0-9]{2}(?P=sep)[0-9]{2}|NULL))'
+    pattern=r'(?P<year>([0-9]{4}))(?P<sep>([-\.\/]))(?P<mon>([0-9]{2}))(?P=sep)(?P<day>([0-9]{2}))'
+    correct_format=re.finditer(pattern,text)
+
+    for each in correct_format:
+        year=each.group('year')
+        month=each.group('mon')
+        day=each.group('day')
+        #print(f"date= {year}-{month}-{day}")
+    if year=='':
+        return 'NULL'
+    return f"{year}-{month}-{day}"
 
 
 def helper(all_project_ids):
@@ -94,8 +118,8 @@ class ShowResult(views.TemplateView):
                 for row in reader:
                     emp = row[0]
                     project = row[1]
-                    date_from = row[2].strip()
-                    date_to = row[3].strip()
+                    date_from = get_different_types_date(row[2].strip())
+                    date_to = get_different_types_date(row[3].strip())
 
                     if date_to == 'NULL':
                         date_to = datetime.datetime.today()
