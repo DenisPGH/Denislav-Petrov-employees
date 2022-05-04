@@ -33,7 +33,7 @@ def helper(all_project_ids):
         list_end_date_both_emp=[]
         result_set = Employees.objects.filter(ProjectID=each_project_id)
         ids_of_current_pair = [x.EmpID for x in result_set]
-        if len(result_set) == pair:
+        if len(result_set) >= pair:
             for each_emp in result_set:
                 # calculate time for current pair
                 list_start_date_both_emp.append(each_emp.DateFrom)
@@ -50,7 +50,10 @@ def helper(all_project_ids):
                     duration=int(str(current_max_time_together_work_on_same_project).split(',')[0].split(" ")[0]),
                     project_id=each_project_id,
                     second_emp_id=ids_of_current_pair[0],
-                    first_emp_id=ids_of_current_pair[1]
+                    first_emp_id=ids_of_current_pair[1],
+                    third_emp_id=0,
+
+
 
                 )
                 new_result.save()

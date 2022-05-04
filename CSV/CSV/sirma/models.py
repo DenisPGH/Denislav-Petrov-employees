@@ -23,5 +23,8 @@ class Result(models.Model):
     project_id=models.IntegerField()
     first_emp_id=models.IntegerField()
     second_emp_id=models.IntegerField()
+    third_emp_id=models.IntegerField(
+        null=True
+    )
 
 
