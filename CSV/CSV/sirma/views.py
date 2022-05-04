@@ -48,7 +48,10 @@ def helper(all_project_ids):
                 #print(f"{each_project_id}='true'")
                 new_result=Result(
                     duration=int(str(current_max_time_together_work_on_same_project).split(',')[0].split(" ")[0]),
-                    project_id=each_project_id
+                    project_id=each_project_id,
+                    second_emp_id=ids_of_current_pair[0],
+                    first_emp_id=ids_of_current_pair[1]
+
                 )
                 new_result.save()
 
@@ -57,7 +60,7 @@ def helper(all_project_ids):
                     final_project_id = each_project_id
                     final_emp_ids = ids_of_current_pair
     #print(ids_of_current_pair)
-    return final_emp_ids,final_project_id,final_max_time
+    return final_emp_ids,final_project_id,str(final_max_time).split(",")[0]
 
 
 
@@ -102,6 +105,7 @@ class ShowResult(views.TemplateView):
                     new_emp.save()
         """# give the date for calculation longest team work"""
         all_emp = Employees.objects.all()
+        all_ordered_results=Result.objects.all().order_by('-duration')
         all_project_id = Employees.objects.filter().values_list('ProjectID', flat=True).distinct()
         ids_emp, id_project, duration = helper(all_project_id)
         """return the result ot render on html page"""
@@ -112,6 +116,8 @@ class ShowResult(views.TemplateView):
             context['duration'] = duration
             context['employee_id_1'] = ids_emp[0]
             context['employee_id_2'] = ids_emp[1]
+            context['ordered_results'] = all_ordered_results
+
         else:
             context['has'] = False
         return context

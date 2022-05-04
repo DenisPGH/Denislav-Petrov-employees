@@ -3,10 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <title>Result</title>
-    <style>
+    <style type="text/css">
         table,td,th{
             border: 1px solid;
+
+
         }
+        table.tabl_1 {
+             counter-reset: row-num;
+        }
+        table.tabl_1 tr.sec {
+            counter-increment: row-num;
+        }
+        table.tabl_1 tr.sec {
+            counter-reset: rowNumber;
+            counter-increment: row-num;
+        }
+        table.tabl_1 tr.sec td:first-child::before {
+    content: counter(row-num) ". ";
+}
     </style>
 </head>
 <body>
@@ -22,13 +37,40 @@
 
 <div>
     {% if has  %}
-    <h3> Project ID of pair with longest time together: {{ longest_pair_project_id }} </h3>
-    <h3> Duration of work together: {{ duration }} </h3>
-    <h3> Employee ID 1: {{ employee_id_1 }} </h3>
-     <h3> Employee ID 2: {{ employee_id_2 }} </h3>
+{#    <h3> Project ID of pair with longest time together: {{ longest_pair_project_id }} </h3>#}
+{#    <h3> Duration of work together: {{ duration }} </h3>#}
+{#    <h3> Employee ID 1: {{ employee_id_1 }} </h3>#}
+{#     <h3> Employee ID 2: {{ employee_id_2 }} </h3>#}
     {% else %}
         <h3> There are not together worked employees in this file.</h3>
     {% endif %}
+</div>
+
+<div>
+<h3> Ordered employees: </h3>
+<table class="tabl_1">
+    <tr class="fir">
+        <th>Place</th>
+        <th>Project ID</th>
+        <th>First employee ID</th>
+        <th>Second employee ID</th>
+        <th>Together worked </th>
+    </tr>
+
+    {%  for each in ordered_results %}
+        <tr class="sec">
+
+            <td> </td>
+            <td>{{ each.project_id}}</td>
+            <td>{{ each.first_emp_id}}</td>
+            <td> {{ each.second_emp_id }}</td>
+            <td> {{ each.duration}} days</td>
+        </tr>
+
+
+    {% endfor %}
+</table>
+
 </div>
 
 
@@ -36,7 +78,6 @@
 <h3> All data from the file: </h3>
 <table class="tabl">
     <tr>
-        <th>ID</th>
         <th>EmpID</th>
         <th>ProjectID</th>
         <th>DateFrom</th>
@@ -44,7 +85,6 @@
     </tr>
     {%  for each in employees %}
         <tr>
-            <th>{{ each.id }}</th>
             <td>{{ each.EmpID}}</td>
             <td>{{ each.ProjectID}}</td>
             <td> {{ each.DateFrom }}</td>

@@ -21,5 +21,7 @@ class Employees(models.Model):
 class Result(models.Model):
     duration=models.IntegerField()
     project_id=models.IntegerField()
+    first_emp_id=models.IntegerField()
+    second_emp_id=models.IntegerField()
 
 
