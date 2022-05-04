@@ -1,16 +1,8 @@
 import datetime
-
-from django.shortcuts import render
 import re
-
-# Create your views here.
 import csv
-
 from django.urls import reverse_lazy
 from django.views import generic as views
-from django.shortcuts import render
-
-# Create your views here.
 from CSV.sirma.models import CSVfiles, Employees, Result
 
 
@@ -38,10 +30,12 @@ def get_different_types_date(text:str):
 
 
 def helper(all_project_ids):
-    """ this function help to find the longest time together in one project"""
+    """
+    this function help to find the MOST ONE =>longest time together in one project
+    return project ID , which employees ids and time together in this project
+    """
     list_all_project_id = list(all_project_ids)
     pair=2
-
     id_of_max_pair = 0
     time_first_employees = 0
     time_second_employees = 0
@@ -76,9 +70,6 @@ def helper(all_project_ids):
                     second_emp_id=ids_of_current_pair[0],
                     first_emp_id=ids_of_current_pair[1],
                     third_emp_id=0,
-
-
-
                 )
                 new_result.save()
 
@@ -94,6 +85,7 @@ def helper(all_project_ids):
 
 
 class StartPage(views.CreateView):
+    """ this class just visualize the main page, where to upload the file"""
     model = CSVfiles
     fields = '__all__'
     template_name = 'index.html'
@@ -102,6 +94,7 @@ class StartPage(views.CreateView):
 
 
 class ShowResult(views.TemplateView):
+    """this class show the result from our file, and ordered by longest time projects ids"""
     template_name = 'result.html'
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -111,7 +104,7 @@ class ShowResult(views.TemplateView):
         delete_all_data.delete()
         delete_all_data_result = Result.objects.all()
         delete_all_data_result.delete()
-        """ store the all new data to the db"""
+        """ store the all new data from the csv file to my db"""
         if file_to_show:
             with open(f'{file_to_show.file}', newline='') as csvfile:
                 reader = csv.reader(csvfile)
@@ -130,12 +123,13 @@ class ShowResult(views.TemplateView):
                         DateTo=date_to,
                     )
                     new_emp.save()
-        """# give the date for calculation longest team work"""
+        """ get date from my db for show in html"""
         all_emp = Employees.objects.all()
         all_ordered_results=Result.objects.all().order_by('-duration')
+        """ give the date for calculation longest ONE team work"""
         all_project_id = Employees.objects.filter().values_list('ProjectID', flat=True).distinct()
         ids_emp, id_project, duration = helper(all_project_id)
-        """return the result ot render on html page"""
+        """return the result in context form ot render on html page"""
         context['employees'] = all_emp
         context['longest_pair_project_id'] = id_project
         if ids_emp:
